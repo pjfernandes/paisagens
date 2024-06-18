@@ -1,0 +1,33 @@
+<h1>All Points</h1>
+
+<div id="map" style="height: 500px;"></div>
+<%= button_to "logout", destroy_user_session_path, method: :delete  %>
+  <script>
+    loadMap = function() {
+      var map = L.map('map').setView([-15, -55], 4);
+
+      var googleSatellite = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+        {
+          maxZoom: 20,
+          subdomains:['mt0','mt1','mt2','mt3'],
+          attribution: '&copy; <a href="https://www.google.com/maps">Google Maps</a>'
+        }
+      );
+
+      googleSatellite.addTo(map);
+
+      // L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+      //   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      // }).addTo(map);
+
+      var points = <%= raw @points.to_json %>;
+
+      points.forEach((point) => {
+        L.marker([point.latitude, point.longitude]).addTo(map)
+        .bindPopup("<b>" + point.name + "</b><br>" + point.description);
+      });
+    };
+    loadMap();
+
+
+  </script>

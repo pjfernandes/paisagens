@@ -1,0 +1,23 @@
+<h1>New Point</h1>
+
+<%= form_with url: points_path, local: true do |form| %>
+  <div>
+    <label for="point_latitude">Latitude</label>
+    <input type="text" name="point[latitude]" id="point_latitude" value="<%= @point.latitude %>">
+  </div>
+  <div>
+    <label for="point_longitude">Longitude</label>
+    <input type="text" name="point[longitude]" id="point_longitude" value="<%= @point.longitude %>">
+  </div>
+  <div>
+    <label for="point_name">Name</label>
+    <input type="text" name="point[name]" id="point_name" value="<%= @point.name %>">
+  </div>
+  <div>
+    <label for="point_description">Description</label>
+    <textarea name="point[description]" id="point_description"><%= @point.description %></textarea>
+  </div>
+  <div>
+    <input type="submit" value="Create Point">
+  </div>
+<% end %>
