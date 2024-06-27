@@ -1,33 +1,174 @@
-<h1>All Points</h1>
-
-<div id="map" style="height: 500px;"></div>
-<%= button_to "logout", destroy_user_session_path, method: :delete  %>
-  <script>
-    loadMap = function() {
-      var map = L.map('map').setView([-15, -55], 4);
-
-      var googleSatellite = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-        {
-          maxZoom: 20,
-          subdomains:['mt0','mt1','mt2','mt3'],
-          attribution: '&copy; <a href="https://www.google.com/maps">Google Maps</a>'
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paisagens Geomorfológicas do Brasil</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
         }
-      );
+        .logo {
+            background: white;
+            border-radius: 50%;
+            padding: 30px;
+            height: 300px;
+        }
+        header {
+            background-color: #6d9f11;
+            color: white;
+            padding: 15px 0;
+        }
+        .footer {
+            background-color: #1dbcc9;
+            padding: 20px 0;
+            text-align: center;
+            color: white;
+        }
+        .footer img {
+            height: 30px;
+        }
+        .footer a {
+            color: white;
+            margin: 0 10px;
+        }
+        #map {
+            height: 500px;
+        }
+        .upload-form {
+            margin: 20px 0;
+        }
+        .btn-primary {
+            background-color: #1dbcc9;
+            border-color: #1dbcc9;
+        }
+        .btn-success {
+            background-color: #6d9f11;
+            border-color: #6d9f11;
+        }
+        .btn-danger {
+            background-color: #fcb616;
+            border-color: #fcb616;
+        }
+        h1.display-4 {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
 
-      googleSatellite.addTo(map);
+        h2.display-4 {
+            text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+            font-size: 28px;
+        }
+    </style>
+</head>
+<body onload="loadMap()">
+    <!-- Header -->
+    <header class="text-center">
+        <%= image_tag("logo2.png", alt: "Paisagens Geomorfológicas do Brasil", class: "logo") %>
+        <section class="text-center mt-3">
+          <h1 class="display-4">Paisagens Geomorfológicas do Brasil</h1>
+          <p class="lead">Explore, compartilhe e descubra os pontos geomorfológicos incríveis do nosso país!</p>
+          <%# <a href="#map-section" class="btn btn-primary btn-lg">Ver Mapa</a> %>
+        </section>
+    </header>
 
-      // L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-      //   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      // }).addTo(map);
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Landing Page Section -->
+        <!-- Map Section -->
+        <section id="map-section" class="mt-5">
+            <div id="map"></div>
+        </section>
 
-      var points = <%= raw @points.to_json %>;
+        <!-- Form Section -->
+        <% if user_signed_in? %>
+          <section class="upload-form">
+              <%= form_with url: points_path, local: true, class: 'upload-form' do |form| %>
+                <div class="form-group">
+                  <label for="point_latitude">Latitude</label>
+                  <%= form.text_field :latitude, class: 'form-control', id: 'point_latitude', value: @point.latitude %>
+                </div>
+                <div class="form-group">
+                  <label for="point_longitude">Longitude</label>
+                  <%= form.text_field :longitude, class: 'form-control', id: 'point_longitude', value: @point.longitude %>
+                </div>
+                <div class="form-group">
+                  <label for="point_name">Nome</label>
+                  <%= form.text_field :name, class: 'form-control', id: 'point_name', value: @point.name %>
+                </div>
+                <div class="form-group">
+                  <label for="point_description">Descrição</label>
+                  <%= form.text_area :description, class: 'form-control', id: 'point_description', rows: 3, value: @point.description %>
+                </div>
+                <div class="form-group">
+                  <input type="submit" class="btn btn-success" value="Enviar">
+                  <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "btn btn-danger ml-3" %>
+                </div>
+              <% end %>
+          </section>
+        <% else %>
+          <section class="login-section text-center m-4">
+            <div class="container">
+                <h2 class="display-4">Poste seus pontos!</h2>
+                <p>Para contribuir, faça login abaixo.</p>
+                <%= link_to "Login", new_user_session_path, class: "btn btn-primary btn-lg" %>
+                <hr>
+            </div>
+          </section>
+        <%end%>
 
-      points.forEach((point) => {
-        L.marker([point.latitude, point.longitude]).addTo(map)
-        .bindPopup("<b>" + point.name + "</b><br>" + point.description);
+
+        <section class="text-center mb-3">
+          <a href="http://lsie.unb.br/ugb/" target="_blank">
+            <img style="height: 100px" src="http://lsie.unb.br/ugb/img/logo_ugb.jpg" alt="União da Geomorfologia Brasileira">
+          </a>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <a href="https://github.com/pjfernandes/paisagens" target="_blank" class="ml-3">
+                <i class="fab fa-github fa-2x"></i>
+            </a>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        function loadMap() {
+            var map = L.map('map').setView([-15, -55], 4);
+
+            var googleSatellite = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                maxZoom: 20,
+                subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+                attribution: '&copy; <a href="https://www.google.com/maps">Google Maps</a>'
+            });
+
+            googleSatellite.addTo(map);
+
+            var points = <%= raw @points.to_json %>;
+
+            points.forEach((point) => {
+                L.marker([point.latitude, point.longitude]).addTo(map)
+                .bindPopup("<b>" + point.name + "</b><br>" + point.description);
+            });
+        }
+    </script>
+
+    <script>
+      $(document).ready(function() {
+        $('#login-button').click(function() {
+          // Carrega o conteúdo do formulário de login dentro do modal
+          $('#login-modal .modal-content').load('<%= new_user_session_path %>');
+          $('#login-modal').modal('show'); // Mostra o modal
+        });
       });
-    };
-    loadMap();
-
-
-  </script>
+    </script>
+</body>
+</html>
