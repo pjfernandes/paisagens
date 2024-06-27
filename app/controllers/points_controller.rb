@@ -1,5 +1,5 @@
 class PointsController < ApplicationController
-  before_action :authenticate_user!, except: [:index]
+  before_action :authenticate_user!, only: [:new, :create, :show]
 
   def index
     @points = Point.all

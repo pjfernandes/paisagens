@@ -104,11 +104,13 @@
                 </div>
                 <div class="form-group">
                   <input type="submit" class="btn btn-success" value="Enviar">
-                  <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "btn btn-danger ml-3" %>
+                  <%= link_to "Sign out", destroy_user_session_path, :method => :delete, class: "btn btn-warning" %>
                 </div>
               <% end %>
           </section>
-        <% else %>
+        <% end %>
+
+        <% if !user_signed_in? %>
           <section class="login-section text-center m-4">
             <div class="container">
                 <h2 class="display-4">Poste seus pontos!</h2>
@@ -118,7 +120,6 @@
             </div>
           </section>
         <%end%>
-
 
         <section class="text-center mb-3">
           <a href="http://lsie.unb.br/ugb/" target="_blank">
