@@ -4,66 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paisagens Geomorfológicas do Brasil</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .logo {
-            background: white;
-            border-radius: 50%;
-            padding: 30px;
-            height: 300px;
-        }
-        header {
-            background-color: #6d9f11;
-            color: white;
-            padding: 15px 0;
-        }
-        .footer {
-            background-color: #1dbcc9;
-            padding: 20px 0;
-            text-align: center;
-            color: white;
-        }
-        .footer img {
-            height: 30px;
-        }
-        .footer a {
-            color: white;
-            margin: 0 10px;
-        }
-        #map {
-            height: 500px;
-        }
-        .upload-form {
-            margin: 20px 0;
-        }
-        .btn-primary {
-            background-color: #1dbcc9;
-            border-color: #1dbcc9;
-        }
-        .btn-success {
-            background-color: #6d9f11;
-            border-color: #6d9f11;
-        }
-        .btn-danger {
-            background-color: #fcb616;
-            border-color: #fcb616;
-        }
-        h1.display-4 {
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        h2.display-4 {
-            text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-            font-size: 28px;
-        }
-    </style>
 </head>
-<body onload="loadMap()">
+<body>
     <!-- Header -->
     <header class="text-center">
         <%= image_tag("logo2.png", alt: "Paisagens Geomorfológicas do Brasil", class: "logo") %>
@@ -85,26 +28,26 @@
         <!-- Form Section -->
         <% if user_signed_in? %>
           <section class="upload-form">
-              <%= form_with url: points_path, local: true, class: 'upload-form' do |form| %>
+              <%= form_with url: points_path, local: true do |form| %>
                 <div class="form-group">
-                  <label for="point_latitude">Latitude</label>
-                  <%= form.text_field :latitude, class: 'form-control', id: 'point_latitude', value: @point.latitude %>
+                  <label for="point_latitude" class="form-label">Latitude</label>
+                  <input type="text" class="form-control" name="point[latitude]" id="point_latitude" value="<%= @point.latitude %>">
                 </div>
-                <div class="form-group">
-                  <label for="point_longitude">Longitude</label>
-                  <%= form.text_field :longitude, class: 'form-control', id: 'point_longitude', value: @point.longitude %>
+                <div>
+                  <label for="point_longitude" class="form-label">Longitude</label>
+                  <input type="text" class="form-control" name="point[longitude]" id="point_longitude" value="<%= @point.longitude %>">
                 </div>
-                <div class="form-group">
-                  <label for="point_name">Nome</label>
-                  <%= form.text_field :name, class: 'form-control', id: 'point_name', value: @point.name %>
+                <div>
+                  <label for="point_name" class="form-label">Nome</label>
+                  <input type="text" class="form-control" name="point[name]" id="point_name" value="<%= @point.name %>">
                 </div>
-                <div class="form-group">
-                  <label for="point_description">Descrição</label>
-                  <%= form.text_area :description, class: 'form-control', id: 'point_description', rows: 3, value: @point.description %>
+                <div>
+                  <label for="point_description" class="form-label">Descrição</label>
+                  <textarea name="point[description]" class="form-control" id="point_description"><%= @point.description %></textarea>
                 </div>
-                <div class="form-group">
-                  <input type="submit" class="btn btn-success" value="Enviar">
-                  <%= link_to "Sign out", destroy_user_session_path, :method => :delete, class: "btn btn-warning" %>
+                <div>
+                  <input type="submit" value="Criar ponto" class="btn btn-success btn-lg mt-3">
+                   <%= link_to "Logout", destroy_user_session_path, method: :delete, class: "btn btn-danger btn-lg mt-3 ml-2" %>
                 </div>
               <% end %>
           </section>
@@ -142,34 +85,32 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-        function loadMap() {
-            var map = L.map('map').setView([-15, -55], 4);
+        loadMap = function() {
+              var map = L.map('map').setView([-15, -55], 4);
 
-            var googleSatellite = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-                maxZoom: 20,
-                subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-                attribution: '&copy; <a href="https://www.google.com/maps">Google Maps</a>'
-            });
+              var googleSatellite = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+                {
+                  maxZoom: 20,
+                  subdomains:['mt0','mt1','mt2','mt3'],
+                  attribution: '&copy; <a href="https://www.google.com/maps">Google Maps</a>'
+                }
+              );
 
-            googleSatellite.addTo(map);
+              googleSatellite.addTo(map);
 
-            var points = <%= raw @points.to_json %>;
+              // L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+              //   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              // }).addTo(map);
 
-            points.forEach((point) => {
+              var points = <%= raw @points.to_json %>;
+
+              points.forEach((point) => {
                 L.marker([point.latitude, point.longitude]).addTo(map)
                 .bindPopup("<b>" + point.name + "</b><br>" + point.description);
-            });
-        }
+              });
+            };
+            loadMap();
     </script>
 
-    <script>
-      $(document).ready(function() {
-        $('#login-button').click(function() {
-          // Carrega o conteúdo do formulário de login dentro do modal
-          $('#login-modal .modal-content').load('<%= new_user_session_path %>');
-          $('#login-modal').modal('show'); // Mostra o modal
-        });
-      });
-    </script>
 </body>
 </html>

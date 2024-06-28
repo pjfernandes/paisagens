@@ -1,0 +1,67 @@
+ body {
+   font-family: Arial, sans-serif;
+ }
+
+ .logo {
+   background: white;
+   border-radius: 50%;
+   padding: 30px;
+   height: 220px;
+ }
+
+ header {
+   background-color: #6d9f11;
+   color: white;
+   padding: 15px 0;
+   width: 100%;
+ }
+
+ .footer {
+   background-color: #1dbcc9;
+   padding: 20px 0;
+   text-align: center;
+   color: white;
+ }
+
+ .footer img {
+   height: 30px;
+ }
+
+ .footer a {
+   color: white;
+   margin: 0 10px;
+ }
+
+ #map {
+   height: 500px;
+  border-radius: 8px;
+ }
+
+ .upload-form {
+   margin: 20px 0;
+ }
+
+ .btn-primary {
+   background-color: #1dbcc9;
+   border-color: #1dbcc9;
+ }
+
+ .btn-success {
+   background-color: #6d9f11;
+   border-color: #6d9f11;
+ }
+
+ .btn-danger {
+   background-color: #fcb616;
+   border-color: #fcb616;
+ }
+
+ h1.display-4 {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-size: 28px;
+ }
+
+ h2.display-4 {
+   text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+   font-size: 24px;
+ }
